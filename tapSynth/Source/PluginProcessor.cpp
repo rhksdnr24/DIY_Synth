@@ -16,9 +16,9 @@ TapSynthAudioProcessor::TapSynthAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), false)
+                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
                       #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), false)
+                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), apvts(*dynamic_cast<juce::AudioProcessor*>(this), nullptr, "Parameters", createParams())
 #endif
@@ -212,20 +212,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
     // OSC select
-    params.push_back (std::make_unique<juce::AudioParameterChoice> ("OSC1", "Oscillator 1", juce::StringArray { "Sine", "Saw", "Square" }, 0));
-    params.push_back (std::make_unique<juce::AudioParameterChoice> ("OSC2", "Oscillator 2", juce::StringArray { "Sine", "Saw", "Square" }, 0));
+    params.push_back (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID("OSC1", 1), "Oscillator 1", juce::StringArray { "Sine", "Saw", "Square" }, 0));
+    params.push_back (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID("OSC2", 1), "Oscillator 2", juce::StringArray { "Sine", "Saw", "Square" }, 0));
     
     // OSC Gain
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1GAIN", "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2GAIN", "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC1GAIN", 1), "Oscillator 1 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC2GAIN", 1), "Oscillator 2 Gain", juce::NormalisableRange<float> { -40.0f, 0.2f, 0.1f }, 0.1f, "dB"));
     
     // OSC Pitch val
-    params.push_back (std::make_unique<juce::AudioParameterInt>("OSC1PITCH", "Oscillator 1 Pitch", -48, 48, 0));
-    params.push_back (std::make_unique<juce::AudioParameterInt>("OSC2PITCH", "Oscillator 2 Pitch", -48, 48, 0));
+    params.push_back (std::make_unique<juce::AudioParameterInt>(juce::ParameterID("OSC1PITCH", 1), "Oscillator 1 Pitch", -48, 48, 0));
+    params.push_back (std::make_unique<juce::AudioParameterInt>(juce::ParameterID("OSC2PITCH", 1), "Oscillator 2 Pitch", -48, 48, 0));
     
     // FM Osc Freq
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMFREQ", "Oscillator 1 FM Frequency",     juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.1f }, 0.0f, "Hz"));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2FMFREQ", "Oscillator 2 FM Frequency", juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.1f }, 0.0f, "Hz"));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC1FMFREQ", 1), "Oscillator 1 FM Frequency",     juce::NormalisableRange<float> { 0.0f, 1000.0f, 0.1f }, 0.0f, "Hz"));
+    
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC2FMFREQ", 1), "Oscillator 2 FM Frequency", juce::NormalisableRange<float> {0.0f, 1000.0f, 0.1f,}, 0.0f, "Hz"));
 //    AudioParameterFloat::AudioParameterFloat (const ParameterID& idToUse,
 //                                              const String& nameToUse,
 //                                              NormalisableRange<float> r,
@@ -233,37 +234,37 @@ juce::AudioProcessorValueTreeState::ParameterLayout TapSynthAudioProcessor::crea
 //                                              const AudioParameterFloatAttributes& attributes)
 
     // FM Osc Depth
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC1FMDEPTH", "Oscillator 1 FM Depth", juce::NormalisableRange<float> { 0.0f, 100.0f, 0.1f }, 0.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("OSC2FMDEPTH", "Oscillator 2 FM Depth", juce::NormalisableRange<float> { 0.0f, 100.0f, 0.1f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC1FMDEPTH", 1), "Oscillator 1 FM Depth", juce::NormalisableRange<float> { 0.0f, 100.0f, 0.1f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("OSC2FMDEPTH", 1), "Oscillator 2 FM Depth", juce::NormalisableRange<float> { 0.0f, 100.0f, 0.1f }, 0.0f, ""));
     
     // LFO
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("LFO1FREQ", "LFO1 Frequency", juce::NormalisableRange<float> { 0.0f, 20.0f, 0.1f }, 0.0f, "Hz"));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("LFO1DEPTH", "LFO1 Depth", juce::NormalisableRange<float> { 0.0f, 10000.0f, 0.1f, 0.3f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("LFO1FREQ", 1), "LFO1 Frequency", juce::NormalisableRange<float> { 0.0f, 20.0f, 0.1f }, 0.0f, "Hz"));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("LFO1DEPTH", 1), "LFO1 Depth", juce::NormalisableRange<float> { 0.0f, 10000.0f, 0.1f, 0.3f }, 0.0f, ""));
     
     //Filter
-    params.push_back (std::make_unique<juce::AudioParameterChoice>("FILTERTYPE", "Filter Type", juce::StringArray { "Low Pass", "Band Pass", "High Pass" }, 0));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERCUTOFF", "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 20000.0f, "Hz"));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRESONANCE", "Filter Resonance", juce::NormalisableRange<float> { 0.1f, 2.0f, 0.1f }, 0.1f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterChoice>(juce::ParameterID("FILTERTYPE", 1), "Filter Type", juce::StringArray { "Low Pass", "Band Pass", "High Pass" }, 0));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERCUTOFF", 1), "Filter Cutoff", juce::NormalisableRange<float> { 20.0f, 20000.0f, 0.1f, 0.6f }, 20000.0f, "Hz"));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERRESONANCE", 1), "Filter Resonance", juce::NormalisableRange<float> { 0.1f, 2.0f, 0.1f }, 0.1f, ""));
     
     // ADSR
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("ATTACK", "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("DECAY", "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("SUSTAIN", "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 1.0f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("RELEASE", "Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("ATTACK", 1), "Attack", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("DECAY", 1), "Decay", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("SUSTAIN", 1), "Sustain", juce::NormalisableRange<float> { 0.1f, 1.0f, 0.1f }, 1.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("RELEASE", 1), "Release", juce::NormalisableRange<float> { 0.1f, 3.0f, 0.1f }, 0.4f));
     
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERADSRDEPTH", "Filter ADSR Depth", juce::NormalisableRange<float> { 0.0f, 10000.0f, 0.1f, 0.3f }, 10000.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERATTACK", "Filter Attack", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.01f }, 0.01f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERDECAY", "Filter Decay", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.1f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERSUSTAIN", "Filter Sustain", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("FILTERRELEASE", "Filter Release", juce::NormalisableRange<float> { 0.0f, 3.0f, 0.1f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERADSRDEPTH", 1), "Filter ADSR Depth", juce::NormalisableRange<float> { 0.0f, 10000.0f, 0.1f, 0.3f }, 10000.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERATTACK", 1), "Filter Attack", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.01f }, 0.01f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERDECAY", 1), "Filter Decay", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.1f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERSUSTAIN", 1), "Filter Sustain", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("FILTERRELEASE", 1), "Filter Release", juce::NormalisableRange<float> { 0.0f, 3.0f, 0.1f }, 0.1f));
     
     // Reverb
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBSIZE", "Reverb Size", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBWIDTH", "Reverb Width", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBDAMPING", "Reverb Damping", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.5f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBDRY", "Reverb Dry", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBWET", "Reverb Wet", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
-    params.push_back (std::make_unique<juce::AudioParameterFloat>("REVERBFREEZE", "Reverb Freeze", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBSIZE", 1), "Reverb Size", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBWIDTH", 1), "Reverb Width", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBDAMPING", 1), "Reverb Damping", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.5f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBDRY", 1), "Reverb Dry", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 1.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBWET", 1), "Reverb Wet", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
+    params.push_back (std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("REVERBFREEZE", 1), "Reverb Freeze", juce::NormalisableRange<float> { 0.0f, 1.0f, 0.1f }, 0.0f, ""));
     
     return { params.begin(), params.end() };
 }
