@@ -45,6 +45,8 @@ private:
     ReverbComponent reverb;
     MeterComponent meter;
     juce::ImageComponent logo;
+    juce::ImageComponent logo_2;
+    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TapSynthAudioProcessorEditor)
 };
