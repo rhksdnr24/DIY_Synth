@@ -55,6 +55,9 @@
       </GROUP>
     </GROUP>
     <FILE id="SSsvAY" name="tapLogo.png" compile="0" resource="1" file="Assets/tapLogo.png"/>
+    <GROUP id="{B5A5D619-5963-562B-6445-C047685A6FA1}" name="Assets">
+      <FILE id="ukR89w" name="SPOTLiGHT.png" compile="0" resource="1" file="Assets/SPOTLiGHT.png"/>
+    </GROUP>
   </MAINGROUP>
   <MODULES>
     <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="1"/>

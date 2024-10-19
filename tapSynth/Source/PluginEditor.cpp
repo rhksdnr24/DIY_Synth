@@ -23,9 +23,13 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
 , meter (audioProcessor)
 {
     auto tapImage = juce::ImageCache::getFromMemory (BinaryData::tapLogo_png, BinaryData::tapLogo_pngSize);
-    
+    auto tapImage_2 = juce::ImageCache::getFromMemory (BinaryData::SPOTLiGHT_png, BinaryData::SPOTLiGHT_pngSize); 
+                                                     
     if (tapImage.isValid())
         logo.setImage (tapImage, juce::RectanglePlacement::stretchToFit);
+    if (tapImage_2.isValid())
+        logo_2.setImage (tapImage_2, juce::RectanglePlacement::stretchToFit);
+    
     else
         jassertfalse;
     
@@ -38,7 +42,8 @@ TapSynthAudioProcessorEditor::TapSynthAudioProcessorEditor (TapSynthAudioProcess
     addAndMakeVisible (reverb);
     addAndMakeVisible (meter);
     addAndMakeVisible (logo);
-    
+    addAndMakeVisible (logo_2);
+
     osc1.setName ("Oscillator 1");
     osc2.setName ("Oscillator 2");
     filter.setName ("Filter");
@@ -89,7 +94,8 @@ void TapSynthAudioProcessorEditor::resized()
     adsr.setBounds (filterAdsr.getRight(), 0, 230, 360);
     reverb.setBounds (0, osc2.getBottom(), oscWidth, 150);
     meter.setBounds (reverb.getRight(), osc2.getBottom(), filterAdsr.getWidth() + lfo1.getWidth(), 150);
-    logo.setBounds (meter.getRight(), osc2.getBottom() + 30, 250, 100);
+//    logo.setBounds (meter.getRight(), osc2.getBottom() + 30, 250, 100);
+    logo_2.setBounds (meter.getRight(), osc2.getBottom() + 30, 250, 100);
 }
 
 void TapSynthAudioProcessorEditor::timerCallback()

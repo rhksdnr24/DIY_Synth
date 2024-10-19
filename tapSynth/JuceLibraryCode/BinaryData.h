@@ -11,8 +11,11 @@ namespace BinaryData
     extern const char*   tapLogo_png;
     const int            tapLogo_pngSize = 30362;
 
+    extern const char*   SPOTLiGHT_png;
+    const int            SPOTLiGHT_pngSize = 567610;
+
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 1;
+    const int namedResourceListSize = 2;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];
